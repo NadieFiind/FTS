@@ -1,7 +1,7 @@
 {1} date("2021-09-26 8:30") > Task 1
-	days(["sat", "sun"], "8:30", "12:00") {1} > Subtask 1-1
+	{1} days(["sat", "sun"], "8:30", "12:00") > Subtask 1-1
 	> Subtask 1-2
 {2} > Task 2
-	date(_, "2021-09-26 13:00") > Subtask 2-1
+	date(None, "2021-09-26 13:00") > Subtask 2-1
 		> Subtask 2-1-1
 > Task 3

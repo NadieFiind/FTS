@@ -7,7 +7,7 @@ class Task:
 	
 	def __init__(
 		self, content: str, *,
-		priority: int = 0, scheduler: Optional[Callable[[], bool]] = None
+		priority: int = 0, scheduler: Optional[Callable[["Task"], bool]] = None
 	):
 		self.content = content
 		self.priority = priority
@@ -35,9 +35,9 @@ class FTSData:
 				subtasks: List[Task] = []
 				
 				for line, hanging_lines in lines.items():
+					priority, scheduler = self._get_priority_and_scheduler(line)
 					subtask = Task(
-						self._get_content(line),
-						priority=self._get_priority(line)
+						self._get_content(line), priority=priority, scheduler=scheduler
 					)
 					
 					set_subtasks(subtask, hanging_lines)
@@ -45,10 +45,8 @@ class FTSData:
 				
 				task.subtasks = subtasks
 			
-			task = Task(
-				self._get_content(line),
-				priority=self._get_priority(line)
-			)
+			priority, scheduler = self._get_priority_and_scheduler(line)
+			task = Task(self._get_content(line), priority=priority, scheduler=scheduler)
 			
 			set_subtasks(task, hanging_lines)
 			tasks.append(task)
@@ -62,20 +60,50 @@ class FTSData:
 		
 		raise InvalidSyntax()
 	
-	def _get_priority(self, line: str) -> int:
-		for index, char in enumerate(line):
-			if char == ">":
-				return 0
+	def _get_priority_and_scheduler(
+		self, line: str
+	) -> (int, Optional[Callable[[Task], bool]]):
+		cursor = 0
+		
+		def get_priority() -> int:
+			nonlocal cursor
 			
-			if char == "{":
-				priority = "0"
+			for index, char in enumerate(line):
+				cursor += 1
+				
+				if char.isspace():
+					continue
+				
+				if char != "{":
+					cursor = index
+					return 0
+				
+				priority = ""
 				
 				for char in line[index + 1:]:
+					cursor += 1
+					
 					if char == "}":
 						break
 					
 					priority += char
 				
-				return int(priority)
+				return int(priority or 0)
+			
+			raise InvalidSyntax()
 		
-		raise InvalidSyntax()
+		def get_scheduler() -> Optional[Callable[[Task], bool]]:
+			scheduler_code = ""
+			
+			for index, char in enumerate(line[cursor:]):
+				if char == ">":
+					return schedulers.parse(scheduler_code)
+				
+				scheduler_code += char
+			
+			raise InvalidSyntax()
+		
+		return get_priority(), get_scheduler()
+
+
+from core import schedulers # noqa E402

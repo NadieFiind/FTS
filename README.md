@@ -1,6 +1,6 @@
 TODO:
 fix readme
-implement a dedicated parser for .ftss file
+implement a dedicated parser for .ftsf file
 
 =================================
 Snapshot File Syntax:
@@ -17,6 +17,8 @@ scheduler function call                      - dt(_, "10:30") > this is a task w
 	scheduler functions are used for scheduling tasks
 	there are different built-in scheduler functions
 	you can also define your own scheduler functions (currently not supported)
+
+*the order of the prefixes matter*
 =================================
 Dat, Time, Day String:
 
@@ -43,8 +45,7 @@ example, list of strings: ["a", "b", "c"]
 =================================
 Built-in Scheduler Functions:
 
-_ is a null value
-parameters that are not given an argument will default to _ or null value
+parameters that are not given an argument will default to None
 Scheduler Functions return a boolean, true if the task is scheduled now, otherwise false
 Scheduler Functions have string representation of themselves
 
