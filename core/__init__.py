@@ -1,18 +1,24 @@
 from utils import stringToDict
 from core.exceptions import InvalidSyntax
-from typing import Any, List, Dict, Optional, Callable
+from typing import Any, List, Dict, Optional
 
 
 class Task:
 	
 	def __init__(
 		self, content: str, *,
-		priority: int = 0, scheduler: Optional[Callable[["Task"], bool]] = None
+		priority: int = 0, scheduler: Optional["Scheduler"] = None
 	):
 		self.content = content
 		self.priority = priority
-		self.scheduler = scheduler
+		self._scheduler = scheduler
 		self.subtasks: List[Task] = []
+	
+	def scheduler(self) -> (bool, str):
+		if self._scheduler is None:
+			return None
+		
+		return self._scheduler.call(self)
 
 
 class FTS:
@@ -37,7 +43,9 @@ class FTSData:
 				for line, hanging_lines in lines.items():
 					priority, scheduler = self._get_priority_and_scheduler(line)
 					subtask = Task(
-						self._get_content(line), priority=priority, scheduler=scheduler
+						self._get_content(line),
+						priority=priority,
+						scheduler=scheduler or task._scheduler
 					)
 					
 					set_subtasks(subtask, hanging_lines)
@@ -62,7 +70,7 @@ class FTSData:
 	
 	def _get_priority_and_scheduler(
 		self, line: str
-	) -> (int, Optional[Callable[[Task], bool]]):
+	) -> (int, Optional["Scheduler"]):
 		cursor = 0
 		
 		def get_priority() -> int:
@@ -92,12 +100,15 @@ class FTSData:
 			
 			raise InvalidSyntax()
 		
-		def get_scheduler() -> Optional[Callable[[Task], bool]]:
+		def get_scheduler() -> Optional[Scheduler]:
 			scheduler_code = ""
 			
 			for index, char in enumerate(line[cursor:]):
 				if char == ">":
-					return schedulers.parse(scheduler_code)
+					if scheduler_code.isspace() or scheduler_code == "":
+						return None
+					
+					return Scheduler.from_code(scheduler_code.strip())
 				
 				scheduler_code += char
 			
@@ -106,4 +117,5 @@ class FTSData:
 		return get_priority(), get_scheduler()
 
 
-from core import schedulers # noqa E402
+# Circular Imports
+from core.scheduler import Scheduler # noqa E402
