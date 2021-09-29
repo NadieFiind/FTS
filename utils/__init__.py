@@ -1,4 +1,5 @@
 from typing import Any, Dict
+from datetime import datetime as dt
 
 
 def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
@@ -49,3 +50,12 @@ def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
 			prev_key = line
 	
 	return result
+
+
+def dateToFriendlyString(datetime: dt) -> str:
+	remaining_days = (datetime - dt.now()).days
+	
+	if 0 <= remaining_days < 7:
+		return datetime.strftime("%a %H:%M")
+	
+	return datetime.strftime("%Y-%m-%d %H:%M")
