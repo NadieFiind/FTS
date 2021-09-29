@@ -2,6 +2,9 @@ from typing import Any, Dict
 from datetime import datetime as dt
 
 
+week_days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+
+
 def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
 	"""Converts the {string} into `dict` based on its indentation."""
 	
@@ -52,10 +55,14 @@ def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
 	return result
 
 
-def dateToFriendlyString(datetime: dt) -> str:
-	remaining_days = (datetime - dt.now()).days
+def dateTimeToFriendlyString(datetime: dt) -> str:
+	remaining_days = (datetime - datetime_now()).days
 	
 	if 0 <= remaining_days < 7:
 		return datetime.strftime("%a %H:%M")
 	
 	return datetime.strftime("%Y-%m-%d %H:%M")
+
+
+def datetime_now() -> dt:
+	return dt.now()

@@ -1,6 +1,6 @@
 from utils import stringToDict
 from core.exceptions import InvalidSyntax
-from typing import Any, List, Dict, Optional
+from typing import Any, List, Dict, Tuple, Optional
 
 
 class Task:
@@ -14,7 +14,7 @@ class Task:
 		self._scheduler = scheduler
 		self.subtasks: List[Task] = []
 	
-	def scheduler(self) -> (bool, str):
+	def scheduler(self) -> Optional[Tuple[bool, str]]:
 		if self._scheduler is None:
 			return None
 		
@@ -70,7 +70,7 @@ class FTSData:
 	
 	def _get_priority_and_scheduler(
 		self, line: str
-	) -> (int, Optional["Scheduler"]):
+	) -> Tuple[int, Optional["Scheduler"]]:
 		cursor = 0
 		
 		def get_priority() -> int:
@@ -108,7 +108,7 @@ class FTSData:
 					if scheduler_code.isspace() or scheduler_code == "":
 						return None
 					
-					return Scheduler.from_code(scheduler_code.strip())
+					return Scheduler.from_code(scheduler_code.strip())  # type: ignore
 				
 				scheduler_code += char
 			
