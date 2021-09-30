@@ -3,7 +3,7 @@ fix readme
 implement a dedicated parser for .ftsf file
 improve error handling
 add web interface
-add documentation and docstrings
+add documentation and docstrings to `core` folder
 
 =================================
 Snapshot File Syntax:

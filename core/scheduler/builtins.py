@@ -4,7 +4,7 @@ from datetime import datetime as dt
 from core.scheduler import Scheduler
 from core.exceptions import InvalidSyntax
 from typing import List, Union, Tuple, Optional
-from utils import MONTHS, WEEK_DAYS, datetime_now, dateTimeToFriendlyString
+from utils import MONTHS, WEEK_DAYS, datetime_now, datetimeToFriendlyString
 
 
 def date(start: Optional[str] = None, end: Optional[str] = None) -> Scheduler:
@@ -22,7 +22,7 @@ def date(start: Optional[str] = None, end: Optional[str] = None) -> Scheduler:
 		
 		@overrides  # type: ignore
 		def __str__(self) -> str:
-			dtf = dateTimeToFriendlyString
+			dtf = datetimeToFriendlyString
 			sdt = start_datetime
 			edt = end_datetime
 			

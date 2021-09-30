@@ -28,11 +28,11 @@ def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
 		return result
 	
 	result: Dict[str, Any] = {}
-	line_pos = 0
-	prev_key = ""
+	line_pos = 0  # Current line position. Empty lines are skipped.
+	prev_key = ""  # The previous key stored in the [result].
 	
 	for line_num, line in enumerate(string.splitlines()):
-		# Filter out blank lines.
+		# Filter-out blank lines.
 		if line.isspace():
 			continue
 		
@@ -43,23 +43,32 @@ def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
 			raise IndentationError(f"Unexpected indent at line {line_num}.")
 		
 		if line.startswith(indent):
-			# Skip if this line is already stored in the {result}.
+			# Skip if this line is already stored in the `result[prev_key]`.
 			if result[prev_key] != {}:
 				continue
 			
+			# Remove unrelevant lines.
 			relevant_lines = "\n".join(string.splitlines()[line_num:])
+			
+			# Set the value of the `result[prev_key]` recursively.
 			result[prev_key] = stringToDict(
 				outdent(relevant_lines, indent=indent),
 				indent=indent
 			)
 		else:
+			# Store this line in the {result} with empty value.
 			result[line] = {}
 			prev_key = line
 	
 	return result
 
 
-def dateTimeToFriendlyString(datetime: dt) -> str:
+def datetimeToFriendlyString(datetime: dt) -> str:
+	"""
+		Convert the {datetime} into a readable string format.
+		If the {datetime} is in less than a week,
+		the date will be replaced by day. (e.g. "2021-09-26" -> "Sun")
+	"""
 	remaining_days = (datetime - datetime_now()).days
 	
 	if 0 <= remaining_days < 7:
