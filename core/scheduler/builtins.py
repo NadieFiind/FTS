@@ -95,7 +95,7 @@ def months(
 		
 		@overrides  # type: ignore
 		def call(self, task: Task) -> Tuple[bool, str]:
-			current_month = WEEK_DAYS[datetime_now().month]
+			current_month = MONTHS[datetime_now().month - 1]
 			
 			for month in months:
 				if month in MONTHS:

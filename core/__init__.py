@@ -15,9 +15,9 @@ class Task:
 		self._scheduler = scheduler
 		self.subtasks: List[Task] = []
 	
-	def scheduler(self) -> Optional[Tuple[bool, str]]:
+	def scheduler(self) -> Tuple[Optional[bool], str]:
 		if self._scheduler is None:
-			return None
+			return None, "No Scheduler"
 		
 		return self._scheduler.call(self)
 
@@ -25,11 +25,11 @@ class Task:
 class FTS:
 	
 	def __init__(self, fts_format: str, *, indent_char: str = "	"):
-		self._data = FTSData(fts_format, indent_char=indent_char)
-		self.tasks: List[Task] = self._data.get_tasks()
+		self._parser = FTSFParser(fts_format, indent_char=indent_char)
+		self.tasks: List[Task] = self._parser.get_tasks()
 
 
-class FTSData:
+class FTSFParser:
 	
 	def __init__(self, fts_format: str, *, indent_char: str = "	") -> None:
 		self._fts_format = fts_format
@@ -37,12 +37,12 @@ class FTSData:
 		self._remove_comments()
 		self._indent_char = indent_char
 	
-	def _remove_empty_lines(self):
+	def _remove_empty_lines(self) -> None:
 		self._fts_format = os.linesep.join(
 			[line for line in self._fts_format.splitlines() if line]
 		)
 	
-	def _remove_comments(self):
+	def _remove_comments(self) -> None:
 		result = [line.split("~#")[0] for line in self._fts_format.splitlines()]
 		self._fts_format = "\n".join(result)
 	
@@ -59,7 +59,7 @@ class FTSData:
 					priority, scheduler = self._get_priority_and_scheduler(line)
 					subtask = Task(
 						self._get_content(line),
-						priority=priority,
+						priority=priority + task.priority,
 						scheduler=scheduler or task._scheduler
 					)
 					
