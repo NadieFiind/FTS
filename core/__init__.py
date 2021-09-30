@@ -23,16 +23,17 @@ class Task:
 
 class FTS:
 	
-	def __init__(self, fts_format: str):
-		self._data = FTSData(fts_format)
+	def __init__(self, fts_format: str, *, indent_char: str = "	"):
+		self._data = FTSData(fts_format, indent_char=indent_char)
 		self.tasks: List[Task] = self._data.get_tasks()
 
 
 class FTSData:
 	
-	def __init__(self, fts_format: str) -> None:
+	def __init__(self, fts_format: str, *, indent_char: str = "	") -> None:
 		self._fts_format = fts_format
 		self._remove_comments()
+		self._indent_char = indent_char
 	
 	def _remove_comments(self):
 		result = [line.split("~#")[0] for line in self._fts_format.splitlines()]
@@ -41,7 +42,9 @@ class FTSData:
 	def get_tasks(self) -> List[Task]:
 		tasks: List[Task] = []
 		
-		for line, hanging_lines in stringToDict(self._fts_format).items():
+		for line, hanging_lines in stringToDict(
+			self._fts_format, indent=self._indent_char
+		).items():
 			def set_subtasks(task: Task, lines: Dict[str, Any]) -> None:
 				subtasks: List[Task] = []
 				

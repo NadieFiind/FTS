@@ -1,3 +1,4 @@
 {
-	"ftsf_folder": "data/ftsf"
+	"ftsf_folder": "data/ftsf",
+	"indent_char": "	"
 }

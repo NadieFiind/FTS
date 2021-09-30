@@ -6,7 +6,7 @@ from core import FTS, Task
 
 def main() -> None:
 	with open("config.json") as file:
-		config = json.load(file)
+		config = json.load(file, strict=False)
 	
 	with open("core/data/data.json") as file:
 		data = json.load(file)
@@ -15,7 +15,7 @@ def main() -> None:
 	
 	try:
 		with open(home_ftsf_path) as file:
-			fts = FTS(file.read())
+			fts = FTS(file.read(), indent_char=config.get("indent_char"))
 	except FileNotFoundError:
 		os.makedirs(config["ftsf_folder"], exist_ok=True)
 		
@@ -24,7 +24,7 @@ def main() -> None:
 		
 		with open(home_ftsf_path, "w") as file:
 			file.write(default_tasks)
-			fts = FTS(default_tasks)
+			fts = FTS(default_tasks, indent_char=config.get("indent_char"))
 	
 	def show(tasks: List[Task], *, level: int = 0) -> None:
 		tasks.sort(key=lambda task: task.priority, reverse=True)
