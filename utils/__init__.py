@@ -6,7 +6,7 @@ WEEK_DAYS: Final = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
 
 
 def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
-	"""Converts the {string} into `dict` based on its indentation."""
+	"""Converts the {string} into `dict` based on the {indent}."""
 	
 	def outdent(string: str, *, indent: str = "	") -> str:
 		"""
@@ -16,7 +16,7 @@ def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
 		result = ""
 		
 		for line in string.splitlines():
-			if line and line[0] == indent:
+			if line.startswith(indent):
 				result += f"{line[1:]}\n"
 			else:
 				break
@@ -35,10 +35,10 @@ def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
 		line_pos += 1
 		
 		# If the first non-empty line is already indented, raise an error.
-		if line_pos == 1 and line[0] == indent:
+		if line_pos == 1 and line.startswith(indent):
 			raise IndentationError(f"Unexpected indent at line {line_num}.")
 		
-		if line and line[0] == indent:
+		if line.startswith(indent):
 			# Skip if this line is already stored in the {result}.
 			if result[prev_key] != {}:
 				continue
