@@ -1,8 +1,8 @@
-from typing import Any, Dict
+from typing import Any, Dict, Final
 from datetime import datetime as dt
 
 
-week_days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+WEEK_DAYS: Final = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
 
 
 def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:

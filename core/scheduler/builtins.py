@@ -2,9 +2,9 @@ from core import Task
 from overrides import overrides
 from datetime import datetime as dt
 from core.scheduler import Scheduler
-from typing import List, Tuple, Optional
 from core.exceptions import InvalidSyntax
-from utils import week_days, datetime_now, dateTimeToFriendlyString
+from typing import List, Union, Tuple, Optional
+from utils import WEEK_DAYS, datetime_now, dateTimeToFriendlyString
 
 
 def date(start: Optional[str] = None, end: Optional[str] = None) -> Scheduler:
@@ -41,8 +41,18 @@ def date(start: Optional[str] = None, end: Optional[str] = None) -> Scheduler:
 
 
 def days(
-	days: List[str], start: Optional[str] = None, end: Optional[str] = None
+	days: Union[str, List[str]],
+	start: Optional[str] = None,
+	end: Optional[str] = None
 ) -> Scheduler:
+	if isinstance(days, str):
+		if days == "everyday":
+			days = WEEK_DAYS
+		elif days == "weekdays":
+			days = ["MON", "TUE", "WED", "THU", "FRI"]
+		elif days == "weekends":
+			days = ["SAT", "SUN"]
+	
 	start_time = dt.strptime(start, "%H:%M").time() if start else dt.min.time()
 	end_time = dt.strptime(end, "%H:%M").time() if end else dt.max.time()
 	
@@ -50,12 +60,12 @@ def days(
 		
 		@overrides  # type: ignore
 		def call(self, task: Task) -> Tuple[bool, str]:
-			current_day = week_days[datetime_now().weekday()]
+			current_day = WEEK_DAYS[datetime_now().weekday()]
 			
 			for day in days:
 				day = day.strip().upper()
 				
-				if day in week_days:
+				if day in WEEK_DAYS:
 					if current_day == day:
 						if start_time <= datetime_now().time() <= end_time:
 							return True, self.__str__()

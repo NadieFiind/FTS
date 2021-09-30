@@ -61,7 +61,10 @@ date(String start, String end):
 		start - defines the start of a task, should be a valid date or date and time string
 		end - defines the end of a task, should be a valid date or date and time string
 
-days(List days, String start, String end):
+days(Union[List, str] days, String start, String end):
+	if days is str:
+		"everyday", "weekdays", "weekends"
+	
 	optionally define the start and the end of a task, recurring based on the [days]
 	
 	parameters:
