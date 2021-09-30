@@ -22,6 +22,8 @@ scheduler function call                      - dt(_, "10:30") > this is a task w
 	you can also define your own scheduler functions (currently not supported)
 
 *the order of the prefixes matter*
+
+- type "#" for comments
 =================================
 Dat, Time, Day String:
 

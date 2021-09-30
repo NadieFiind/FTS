@@ -32,6 +32,11 @@ class FTSData:
 	
 	def __init__(self, fts_format: str) -> None:
 		self._fts_format = fts_format
+		self._remove_comments()
+	
+	def _remove_comments(self):
+		result = [line.split("~#")[0] for line in self._fts_format.splitlines()]
+		self._fts_format = "\n".join(result)
 	
 	def get_tasks(self) -> List[Task]:
 		tasks: List[Task] = []

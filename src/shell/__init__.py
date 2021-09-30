@@ -30,7 +30,7 @@ def main() -> None:
 		tasks.sort(key=lambda task: task.priority, reverse=True)
 		
 		for task in tasks:
-			print(f"{'  ' * level}{task.scheduler()}")
+			print(f"{'  ' * level}{task.content}")
 			show(task.subtasks, level=level + 1)
 	
 	show(fts.tasks)
