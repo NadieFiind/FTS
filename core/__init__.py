@@ -1,3 +1,4 @@
+import os
 from utils import stringToDict
 from core.exceptions import InvalidSyntax
 from typing import Any, List, Dict, Tuple, Optional
@@ -32,8 +33,14 @@ class FTSData:
 	
 	def __init__(self, fts_format: str, *, indent_char: str = "	") -> None:
 		self._fts_format = fts_format
+		self._remove_empty_lines()
 		self._remove_comments()
 		self._indent_char = indent_char
+	
+	def _remove_empty_lines(self):
+		self._fts_format = os.linesep.join(
+			[line for line in self._fts_format.splitlines() if line]
+		)
 	
 	def _remove_comments(self):
 		result = [line.split("~#")[0] for line in self._fts_format.splitlines()]

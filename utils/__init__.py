@@ -16,7 +16,7 @@ def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
 		result = ""
 		
 		for line in string.splitlines():
-			if line[0] == indent:
+			if line and line[0] == indent:
 				result += f"{line[1:]}\n"
 			else:
 				break
@@ -38,7 +38,7 @@ def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
 		if line_pos == 1 and line[0] == indent:
 			raise IndentationError(f"Unexpected indent at line {line_num}.")
 		
-		if line[0] == indent:
+		if line and line[0] == indent:
 			# Skip if this line is already stored in the {result}.
 			if result[prev_key] != {}:
 				continue

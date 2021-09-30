@@ -46,11 +46,11 @@ def days(
 	end: Optional[str] = None
 ) -> Scheduler:
 	if isinstance(days, str):
-		if days == "everyday":
+		if days.lower() == "everyday":
 			days = WEEK_DAYS
-		elif days == "weekdays":
+		elif days.lower() == "weekdays":
 			days = ["MON", "TUE", "WED", "THU", "FRI"]
-		elif days == "weekends":
+		elif days.lower() == "weekends":
 			days = ["SAT", "SUN"]
 	
 	start_time = dt.strptime(start, "%H:%M").time() if start else dt.min.time()
