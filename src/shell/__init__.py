@@ -1,19 +1,28 @@
 import os
+import json
 from typing import List
 from core import FTS, Task
 
 
 def main() -> None:
+	with open("config.json") as file:
+		config = json.load(file)
+	
+	with open("core/data/data.json") as file:
+		data = json.load(file)
+	
+	home_ftsf_path = os.path.join(config["ftsf_folder"], data["home_ftsf"])
+	
 	try:
-		with open("data/tasks.ftsf") as file:
+		with open(home_ftsf_path) as file:
 			fts = FTS(file.read())
 	except FileNotFoundError:
-		os.makedirs("data", exist_ok=True)
+		os.makedirs(config["ftsf_folder"], exist_ok=True)
 		
-		with open("core/data/default_tasks.ftsf") as file:
+		with open("core/data/ftsf/default.ftsf") as file:
 			default_tasks = file.read()
 		
-		with open("data/tasks.ftsf", "w") as file:
+		with open(home_ftsf_path, "w") as file:
 			file.write(default_tasks)
 			fts = FTS(default_tasks)
 	
