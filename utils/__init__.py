@@ -3,6 +3,10 @@ from datetime import datetime as dt
 
 
 WEEK_DAYS: Final = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+MONTHS: Final = [
+	"JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+	"JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+]
 
 
 def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
