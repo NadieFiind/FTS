@@ -3,11 +3,13 @@ from overrides import overrides
 from datetime import datetime as dt
 from core.scheduler import Scheduler
 from core.exceptions import InvalidSyntax
-from typing import List, Union, Tuple, Optional
+from typing import Type, List, Union, Tuple, Optional
 from utils import MONTHS, WEEK_DAYS, datetime_now, datetimeToFriendlyString
 
 
-def date(start: Optional[str] = None, end: Optional[str] = None) -> Scheduler:
+def date(
+	start: Optional[str] = None, end: Optional[str] = None
+) -> Type[Scheduler]:
 	start_datetime = dt.strptime(start, "%Y-%m-%d %H:%M") if start else dt.min
 	end_datetime = dt.strptime(end, "%Y-%m-%d %H:%M") if end else dt.max
 	
@@ -44,7 +46,7 @@ def days(
 	days: Union[str, List[str]],
 	start: Optional[str] = None,
 	end: Optional[str] = None
-) -> Scheduler:
+) -> Type[Scheduler]:
 	if isinstance(days, str):
 		if days.lower() == "everyday":
 			days = WEEK_DAYS

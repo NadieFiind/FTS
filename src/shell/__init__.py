@@ -38,7 +38,7 @@ def print_tasks(tasks: List[Task], *, indent_level: int = 0) -> None:
 	tasks[:].sort(key=lambda task: task.priority, reverse=True)
 	
 	for task in tasks:
-		do_now, _ = task.scheduler()
+		do_now, _ = task.call_scheduler()
 		
 		# Show the tasks that must be done now and the tasks that has no scheduler.
 		if do_now or do_now is None:

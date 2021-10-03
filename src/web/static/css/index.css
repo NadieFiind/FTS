@@ -1,0 +1,132 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+
+/* Scrollbar */
+body::-webkit-scrollbar {
+	width: 1px;
+}
+body::-webkit-scrollbar-track {
+	background: #0e1111;
+}
+body::-webkit-scrollbar-thumb {
+	background: #888;
+}
+body::-webkit-scrollbar-thumb:hover {
+	background: #ffffff;
+}
+
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+
+.del-btn {
+	width: 17px;
+	height: 17px;
+	border: none;
+	background-color: transparent;
+	background-size: cover;
+	background-image: url(../img/trash_bin.png);
+	filter: invert(100%);
+	border-radius: 30%;
+}
+.del-btn:active {
+	filter: invert(0%);
+	background-color: red;
+}
+
+
+.no-tasks {
+	text-align: center;
+	color: white;
+	font-size: 3rem;
+}
+
+
+body {
+	margin: 20px 0;
+	padding: 0;
+	background-color: hsl(0, 0%, 20%);
+	font-family: Poppins;
+	
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+
+.controls {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background-color: hsl(0, 0%, 19%);
+	box-shadow: 0 0 10px 5px hsl(0, 0%, 16%);
+	transition: 200ms;
+}
+.controls.hidden {
+	visibility: hidden;
+	opacity: 0;
+}
+
+.controls > .close-btn {
+	position: absolute;
+	top: 0;
+	right: 14px;
+	width: 20px;
+	height: 100%;
+	border-radius: 100%;
+	cursor: pointer;
+	filter: invert(100%);
+	background-size: cover;
+	background-image: url(../img/bar.png);
+}
+.controls > .close-btn:active {
+	-webkit-tap-highlight-color: transparent;
+}
+
+.controls > .btn {
+	padding: 5px 20px;
+	display: inline-block;
+	cursor: pointer;
+	color:  white;
+}
+.controls > .btn.active {
+	background-color: hsl(0, 0%, 10%);
+}
+
+
+.task {
+	margin: 7px 0 7px 25px;
+}
+.task.ignore, .task.ignore > .task-content, .task.ignore > .task-schedule {
+	color: gray;
+}
+
+.task .task-content {
+	color: white;
+	font-size: 1.1rem;
+}
+
+.task .task-id {
+	background-color: black;
+	padding: 2px;
+	color: white;
+	font-size: 0.7rem;
+}
+
+.task .task-schedule {
+	color: lightgray;
+	font-size: 0.85rem;
+}
+.task-schedule.now {
+	color: #66ff00;
+}

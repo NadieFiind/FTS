@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 overrides = "*"
+flask = "*"
 
 [dev-packages]
 

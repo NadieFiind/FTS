@@ -1,15 +1,17 @@
-TODO:
-fix readme
-implement a dedicated parser for .ftsf file
-improve error handling
-add web interface
-add documentation and docstrings to `core` folder
+# Flexible Tasks Scheduler
+> Flexible Tasks Scheduler (FTS).
 
-=================================
-Snapshot File Syntax:
+## TODO
+- Improve this README.
+- Add documentation to the `core`.
+- Improve error handling on the `core`.
+- Implement a dedicated parser for `.ftsf` files.
 
-- every line is a task
-the line should start with ">"
+## FTS File Format
+- Every line except for empty lines is a "task" starting with a character `>`.
+```
+> This is a task.
+```
 
 - you can put certain prefix to a line
 the available prefixes are:
@@ -23,7 +25,7 @@ scheduler function call                      - dt(_, "10:30") > this is a task w
 
 *the order of the prefixes matter*
 
-- type "#" for comments
+- type "~#" for comments
 =================================
 Dat, Time, Day String:
 
@@ -79,3 +81,13 @@ if a schedule is defined in a subtask, it will override its parent's schedule
 but if the schedule of the subtask overlaps its parent's schedule, an error will occur
 
 =================================
+sensitive chars:
+">"
+since the parser is very basic,
+the ">" will be considered as the start of the task's content regardless of where it is placed
+for example:
+
+{2} scheduler(">") > task
+
+the first occurrence of ">" will be considered as the start of the task's content
+and obviously, it will cause an error

@@ -1,5 +1,6 @@
-from typing import Any, Dict, Final
+from collections import OrderedDict
 from datetime import datetime as dt
+from typing import Any, Dict, Final, Tuple
 
 
 WEEK_DAYS: Final = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
@@ -9,8 +10,15 @@ MONTHS: Final = [
 ]
 
 
-def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
+def stringToDict(
+	string: str, *, indent: str = "	", starting_line_num: int = 1
+) -> Dict[Tuple[int, str], Any]:
 	"""Converts the {string} into `dict` based on the {indent}."""
+	
+	result: Dict[Tuple[int, str], Any] = OrderedDict()
+	line_num: int = starting_line_num - 1  # Current line number.
+	line_pos: int = 0  # Current line position. Empty lines are skipped.
+	prev_key: Tuple[int, str] = (-1, "")  # Previous key stored in the {result}.
 	
 	def outdent(string: str, *, indent: str = "	") -> str:
 		"""
@@ -27,38 +35,34 @@ def stringToDict(string: str, *, indent: str = "	") -> Dict[str, Any]:
 		
 		return result
 	
-	result: Dict[str, Any] = {}
-	line_pos = 0  # Current line position. Empty lines are skipped.
-	prev_key = ""  # The previous key stored in the [result].
-	
-	for line_num, line in enumerate(string.splitlines()):
-		# Filter-out blank lines.
-		if line.isspace():
-			continue
+	for index, line in enumerate(string.splitlines()):
+		line_num += 1
 		
-		line_pos += 1
+		if not line.isspace():
+			line_pos += 1
 		
 		# If the first non-empty line is already indented, raise an error.
 		if line_pos == 1 and line.startswith(indent):
 			raise IndentationError(f"Unexpected indent at line {line_num}.")
 		
-		if line.startswith(indent):
+		if line.startswith(indent) and not line.isspace():
 			# Skip if this line is already stored in the `result[prev_key]`.
 			if result[prev_key] != {}:
 				continue
 			
 			# Remove unrelevant lines.
-			relevant_lines = "\n".join(string.splitlines()[line_num:])
+			relevant_lines = "\n".join(string.splitlines()[index:])
 			
 			# Set the value of the `result[prev_key]` recursively.
 			result[prev_key] = stringToDict(
 				outdent(relevant_lines, indent=indent),
-				indent=indent
+				indent=indent,
+				starting_line_num=line_num
 			)
 		else:
 			# Store this line in the {result} with empty value.
-			result[line] = {}
-			prev_key = line
+			result[(line_num, line)] = {}
+			prev_key = (line_num, line)
 	
 	return result
 
