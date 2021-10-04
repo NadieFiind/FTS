@@ -1,5 +1,5 @@
-from core import Task
 from typing import Tuple
+from fts.core import Task
 from abc import ABC, abstractmethod
 from overrides import final, EnforceOverrides
 
@@ -27,4 +27,4 @@ class Scheduler(ABC, EnforceOverrides):
 
 
 # Circular Imports
-from core.scheduler.builtins import *  # noqa E402, E261
+from fts.core.scheduler.builtins import *  # noqa E402, E261

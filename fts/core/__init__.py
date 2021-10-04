@@ -1,5 +1,5 @@
-from utils import stringToDict
-from core.exceptions import InvalidSyntax
+from fts.utils import stringToDict
+from fts.core.exceptions import InvalidSyntax
 from typing import Any, List, Dict, Tuple, Optional
 
 
@@ -262,7 +262,7 @@ class FTSFEditor:
 		new_line = self.indent_char * indent_level + new_line
 		
 		new_value = lines[:task.line_num - 1] + [new_line] + lines[task.line_num:]
-		self.value = "\n".join(new_value) + "\n"
+		self.value = "\n".join(new_value).strip() + "\n"
 	
 	def insert_task(self, task: Task) -> int:
 		def flatten_subtasks(task: Task) -> List[Task]:
@@ -294,6 +294,12 @@ class FTSFEditor:
 			else:
 				prev_task = task.fts.tasks[task_index - 1]
 		
+		################################################
+		#                                              #
+		# FUCK THIS CODE! IDK WHAT'S GOING ON ANYMORE. #
+		#                                              #
+		################################################
+		
 		lines = self.value.splitlines()
 		new_line = f"> {task.content}".strip()
 		
@@ -307,24 +313,11 @@ class FTSFEditor:
 		new_line = self.indent_char * indent_level + new_line
 		line_num = prev_task.line_num if prev_task else 0
 		
-		if line_num == 0:
-			new_line += "\n"
-		
-		################################################
-		#                                              #
-		# FUCK THIS CODE! IDK WHAT'S GOING ON ANYMORE. #
-		#                                              #
-		################################################
-		
-		if prev_task:
-			if prev_task not in (task.fts, task.parent):
-				line_num += len(flatten_subtasks(prev_task))
-			
-			if task.parent is None:
-				new_line = "\n" + new_line
+		if prev_task and prev_task not in (task.fts, task.parent):
+			line_num += len(flatten_subtasks(prev_task))
 		
 		lines.insert(line_num, new_line)
-		self.value = "\n".join(lines) + "\n"
+		self.value = "\n".join(lines).strip() + "\n"
 		
 		return line_num
 	
@@ -344,4 +337,4 @@ class FTSFEditor:
 
 
 # Circular Imports
-from core.scheduler import Scheduler  # noqa E402
+from fts.core.scheduler import Scheduler  # noqa E402

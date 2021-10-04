@@ -1,7 +1,7 @@
 import os
 import json
 from typing import List
-from core import FTS, Task
+from fts.core import FTS, Task
 
 
 def initialize_fts() -> FTS:
@@ -10,11 +10,11 @@ def initialize_fts() -> FTS:
 		config = json.load(file, strict=False)
 	
 	# Open the data file.
-	with open("core/data/data.json") as file:
+	with open("fts/core/data/data.json") as file:
 		data = json.load(file)
 	
 	# The path of the home FTS format file.
-	home_ftsf_path = os.path.join(config["ftsf_folder"], data["home_ftsf"])
+	home_ftsf_path = os.path.join(config["ftsf_folder_path"], data["home_ftsf"])
 	
 	try:
 		# Initialize the {FTS} from the home FTS format file.
@@ -23,9 +23,9 @@ def initialize_fts() -> FTS:
 	
 	# If the home FTS format file doesn't exist, create one.
 	except FileNotFoundError:
-		os.makedirs(config["ftsf_folder"], exist_ok=True)
+		os.makedirs(config["ftsf_folder_path"], exist_ok=True)
 		
-		with open("core/data/ftsf/default.ftsf") as file:
+		with open("fts/core/data/ftsf/default.ftsf") as file:
 			ftsf = file.read()
 		
 		with open(home_ftsf_path, "w") as file:

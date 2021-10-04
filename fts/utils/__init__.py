@@ -13,7 +13,25 @@ MONTHS: Final = [
 def stringToDict(
 	string: str, *, indent: str = "	", starting_line_num: int = 1
 ) -> Dict[Tuple[int, str], Any]:
-	"""Converts the {string} into `dict` based on the {indent}."""
+	"""
+		Converts the {string} into `dict` based on the {indent} character.
+		The structure of the dictionary is as follows:
+		
+		```py
+		{
+			(1, "First Line"): {
+				(2, "Second Line, Indented"): {}
+			},
+			(3, "Third Line"): {},
+			(4, "Fourth Line"): {
+				(5, "Fifth Line, Indented"): {
+					(6, "Sixth Line, Double Indented"): {}
+				},
+				(7, "Seventh Line, Indented"): {}
+			}
+		}
+		```
+	"""
 	
 	result: Dict[Tuple[int, str], Any] = OrderedDict()
 	line_num: int = starting_line_num - 1  # Current line number.
@@ -29,7 +47,7 @@ def stringToDict(
 		
 		for line in string.splitlines():
 			if line.startswith(indent):
-				result += f"{line[1:]}\n"
+				result += f"{line[len(indent):]}\n"
 			else:
 				break
 		
@@ -43,33 +61,34 @@ def stringToDict(
 		
 		# If the first non-empty line is already indented, raise an error.
 		if line_pos == 1 and line.startswith(indent):
-			raise IndentationError(f"Unexpected indent at line {line_num}.")
+			raise IndentationError(f"Unexpected indentation at line {line_num}.")
 		
 		if line.startswith(indent) and not line.isspace():
-			# Skip if this line is already stored in the `result[prev_key]`.
+			# Skip if this line is already stored in the {result[prev_key]}.
 			if result[prev_key] != {}:
 				continue
 			
 			# Remove unrelevant lines.
 			relevant_lines = "\n".join(string.splitlines()[index:])
 			
-			# Set the value of the `result[prev_key]` recursively.
+			# Set the value of the {result[prev_key]} recursively.
 			result[prev_key] = stringToDict(
 				outdent(relevant_lines, indent=indent),
 				indent=indent,
 				starting_line_num=line_num
 			)
 		else:
-			# Store this line in the {result} with empty value.
-			result[(line_num, line)] = {}
-			prev_key = (line_num, line)
+			# Store this line with its line number in the {result} with empty value.
+			key = (line_num, line)
+			result[key] = {}
+			prev_key = key
 	
 	return result
 
 
 def datetimeToFriendlyString(datetime: dt) -> str:
 	"""
-		Convert the {datetime} into a readable string format.
+		Convert the {datetime} into a friendly string format.
 		If the {datetime} is in less than a week,
 		the date will be replaced by day. (e.g. "2021-09-26" -> "Sun")
 	"""

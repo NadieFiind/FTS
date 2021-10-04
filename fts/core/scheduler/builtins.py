@@ -1,10 +1,10 @@
-from core import Task
+from fts.core import Task
 from overrides import overrides
 from datetime import datetime as dt
-from core.scheduler import Scheduler
-from core.exceptions import InvalidSyntax
+from fts.core.scheduler import Scheduler
+from fts.core.exceptions import InvalidSyntax
 from typing import Type, List, Union, Tuple, Optional
-from utils import MONTHS, WEEK_DAYS, datetime_now, datetimeToFriendlyString
+from fts.utils import MONTHS, WEEK_DAYS, datetime_now, datetimeToFriendlyString
 
 
 def date(
