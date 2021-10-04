@@ -56,6 +56,14 @@ class FTS:
 		self._editor.edit_task(task)
 		self._parser.value = self._editor.value
 	
+	@property
+	def sorted_tasks(self) -> List[Task]:
+		return sorted(
+			self.tasks,
+			key=lambda task: task.priority + int(task.call_scheduler()[0] or 0),
+			reverse=True
+		)
+	
 	def add_task(
 		self, content: str, *, parent: Optional[Task] = None,
 		priority: int = 0, scheduler: Optional["Scheduler"] = None,

@@ -14,7 +14,7 @@
 	</head>
 	<body class="noselect">
 		<main>
-			{% for task in fts.tasks recursive %}
+			{% for task in fts.sorted_tasks recursive %}
 			<div id="{{ task.id }}" class="task{{ ' ignore' if task.priority < 0 }}">
 				<div class="task-content">
 					<span class="task-id">{{ task.id }}</span>

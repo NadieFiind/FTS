@@ -1,36 +1,6 @@
-import os
-import json
 from typing import List
-from fts.core import FTS, Task
-
-
-def initialize_fts() -> FTS:
-	# Open the configuration data.
-	with open("config.json") as file:
-		config = json.load(file, strict=False)
-	
-	# Open the data file.
-	with open("fts/core/data/data.json") as file:
-		data = json.load(file)
-	
-	# The path of the home FTS format file.
-	home_ftsf_path = os.path.join(config["ftsf_folder_path"], data["home_ftsf"])
-	
-	try:
-		# Initialize the {FTS} from the home FTS format file.
-		with open(home_ftsf_path) as file:
-			return FTS(file.read(), indent_char=config.get("indent_char"))
-	
-	# If the home FTS format file doesn't exist, create one.
-	except FileNotFoundError:
-		os.makedirs(config["ftsf_folder_path"], exist_ok=True)
-		
-		with open("fts/core/data/ftsf/default.ftsf") as file:
-			ftsf = file.read()
-		
-		with open(home_ftsf_path, "w") as file:
-			file.write(ftsf)
-			return FTS(ftsf, indent_char=config.get("indent_char"))
+from fts.core import Task
+from fts.data_handler import initialize_fts
 
 
 def print_tasks(tasks: List[Task], *, indent_level: int = 0) -> None:

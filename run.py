@@ -1,3 +1,5 @@
+"""Entry Point"""
+
 import os
 import sys
 from fts.src import web, shell
