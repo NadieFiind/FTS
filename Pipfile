@@ -3,6 +3,9 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[scripts]
+app = "python run.py"
+
 [packages]
 overrides = "*"
 flask = "*"
@@ -10,4 +13,3 @@ flask = "*"
 [dev-packages]
 
 [requires]
-python_version = "3.9"

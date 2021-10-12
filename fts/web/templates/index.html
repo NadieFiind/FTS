@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>FTS</title>
+		<meta charset="utf-8">
+		<meta name="robots" content="noindex, nofollow">
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+		<link rel="icon" href="https://www.pinclipart.com/picdir/big/109-1098476_checklist-poll-task-to-do-list-clipboard-comments.png">
+		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+		<script src="{{ url_for('static', filename='script.js') }}" defer></script>
+	</head>
+	<body>
+		{% for task in fts.sorted_tasks recursive %}
+		<div id="{{ task.id }}" class="task{{ ' ignore' if task.priority < 0 }}">
+			<div class="task-content">
+				<span class="hide-btn noselect">x</span>
+				<span class="content">{{ task.content }}</span>
+			</div>
+			
+			{% if task.scheduler %}
+			<div class="task-schedule{{ ' now' if task.call_scheduler()[0] }}">{{ task.call_scheduler()[1] }}</div>
+			{% endif %}
+			
+			{{ loop(task.sorted_subtasks) }}
+		</div>
+		{% endfor %}
+		
+		{% if not fts.tasks %}
+		<div class="no-tasks">no tasks???</div>
+		{% endif %}
+		
+		<button class="reload-btn" onclick="localStorage.clear(); location.reload();">Reload</button>
+	</body>
+</html>

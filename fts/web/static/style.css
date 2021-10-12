@@ -1,0 +1,83 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+
+/* Scrollbar */
+body::-webkit-scrollbar {
+	width: 1px;
+}
+body::-webkit-scrollbar-track {
+	background: #0e1111;
+}
+body::-webkit-scrollbar-thumb {
+	background: #888;
+}
+body::-webkit-scrollbar-thumb:hover {
+	background: #ffffff;
+}
+
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+
+body {
+	margin: 20px 0;
+	padding: 0;
+	background-color: hsl(0, 0%, 20%);
+	font-family: Poppins;
+}
+
+
+.task {
+	margin: 7px 0 7px 25px;
+}
+.task.ignore, .task.ignore > .task-content, .task.ignore > .task-schedule {
+	color: gray;
+}
+
+.task .task-content {
+	color: white;
+	font-size: 1.1rem;
+}
+
+.task .hide-btn {
+	position: relative;
+	top: -3px;
+	display: inline-block;
+	text-align: center;
+	background-color: black;
+	width: 17px;
+	color: red;
+	font-size: 0.7rem;
+	cursor: pointer;
+}
+
+.task .task-schedule {
+	color: lightgray;
+	font-size: 0.85rem;
+}
+.task-schedule.now {
+	color: #66ff00;
+}
+
+
+.no-tasks {
+	text-align: center;
+	color: white;
+	font-size: 3rem;
+}
+
+
+.reload-btn {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	color: white;
+	background-color: black;
+}

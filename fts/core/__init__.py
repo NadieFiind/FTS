@@ -13,20 +13,20 @@ class Task:
 	):
 		self.fts = fts
 		self.parent = parent
-		self._content = content
+		self.content = content
 		self.priority = priority
 		self.scheduler = scheduler
 		self.subtasks: List[Task] = []
 		self.line_num = line_num  # Line number of this task in the FTS format file.
 	
 	@property
-	def content(self) -> str:
-		return self._content
-	
-	@content.setter
-	def content(self, value: str) -> None:
-		self._content = value
-		self.fts._update_task(self)
+	def sorted_subtasks(self) -> List["Task"]:
+		"""Key: priority * int(scheduler[0]) * 2"""
+		return sorted(
+			self.subtasks,
+			key=lambda task: task.priority + int(task.call_scheduler()[0] or 0) * 2,
+			reverse=True
+		)
 	
 	@property
 	def id(self) -> str:
@@ -49,63 +49,16 @@ class FTS:
 	
 	def __init__(self, fts_format: str, *, indent_char: str = "	"):
 		self._parser = FTSFParser(fts_format, indent_char=indent_char)
-		self._editor = FTSFEditor(fts_format, indent_char=indent_char)
 		self.tasks: List[Task] = self._parser.get_tasks(self)
-	
-	def _update_task(self, task: Task) -> None:
-		self._editor.edit_task(task)
-		self._parser.value = self._editor.value
 	
 	@property
 	def sorted_tasks(self) -> List[Task]:
+		"""Key: priority * int(scheduler[0]) * 2"""
 		return sorted(
 			self.tasks,
-			key=lambda task: task.priority + int(task.call_scheduler()[0] or 0),
+			key=lambda task: task.priority + int(task.call_scheduler()[0] or 0) * 2,
 			reverse=True
 		)
-	
-	def add_task(
-		self, content: str, *, parent: Optional[Task] = None,
-		priority: int = 0, scheduler: Optional["Scheduler"] = None,
-		position: int = 0
-	) -> Task:
-		task = Task(
-			content,
-			fts=self,
-			parent=parent,
-			priority=priority + parent.priority if parent else priority,
-			scheduler=scheduler,
-			line_num=-1
-		)
-		
-		if parent:
-			parent.subtasks.insert(position, task)
-		else:
-			self.tasks.insert(position, task)
-		
-		task.line_num = self._editor.insert_task(task)
-		self._parser.value = self._editor.value
-		
-		self.tasks = self._parser.get_tasks(self)
-		return task
-	
-	def to_string(self) -> str:
-		return self._editor.value
-	
-	def delete_task_by_id(self, id: str) -> None:
-		task = self.get_task_by_id(id)
-		if task is None:
-			return
-		
-		self._editor.remove_task(task)
-		
-		if task.parent:
-			task.parent.subtasks.remove(task)
-		else:
-			task.fts.tasks.remove(task)
-		
-		self._parser.value = self._editor.value
-		self.tasks = self._parser.get_tasks(self)
 	
 	def get_task_by_id(self, id: str) -> Optional[Task]:
 		def get_subtask(task: Task, *, level: int = 1) -> Optional[Task]:
@@ -238,110 +191,6 @@ class FTSFParser:
 			raise InvalidSyntax()
 		
 		return get_priority(), get_scheduler()
-
-
-class FTSFEditor:
-	
-	def __init__(self, fts_format: str, *, indent_char: str = "	") -> None:
-		self.value = fts_format
-		self.indent_char = indent_char
-	
-	def edit_task(self, task: Task) -> None:
-		lines = self.value.splitlines()
-		line = lines[task.line_num - 1]
-		comment: Optional[str]
-		
-		if "~#" in line:
-			non_comment, comment = line.split("~#")
-		else:
-			non_comment = line
-			comment = None
-		
-		prefix, content = non_comment.split(">")
-		new_line = f"> {task.content} {f'~#{comment}' if comment else ''}".strip()
-		
-		if task.scheduler is not None:
-			new_line = f"{task.scheduler.code} " + new_line
-		
-		if task.priority != 0:
-			new_line = f"{{{task.priority}}} " + new_line
-		
-		indent_level = len(task.id) - 1
-		new_line = self.indent_char * indent_level + new_line
-		
-		new_value = lines[:task.line_num - 1] + [new_line] + lines[task.line_num:]
-		self.value = "\n".join(new_value).strip() + "\n"
-	
-	def insert_task(self, task: Task) -> int:
-		def flatten_subtasks(task: Task) -> List[Task]:
-			result = []
-			
-			def loop(tasks: List[Task]) -> None:
-				nonlocal result
-				for task in tasks:
-					result.append(task)
-					loop(task.subtasks)
-			
-			loop(task.subtasks)
-			return result
-		
-		prev_task: Optional[Task]
-		
-		if task.parent:
-			task_index = task.parent.subtasks.index(task)
-			
-			if task_index == 0:
-				prev_task = task.parent
-			else:
-				prev_task = task.parent.subtasks[task_index - 1]
-		else:
-			task_index = task.fts.tasks.index(task)
-			
-			if task_index == 0:
-				prev_task = None
-			else:
-				prev_task = task.fts.tasks[task_index - 1]
-		
-		################################################
-		#                                              #
-		# FUCK THIS CODE! IDK WHAT'S GOING ON ANYMORE. #
-		#                                              #
-		################################################
-		
-		lines = self.value.splitlines()
-		new_line = f"> {task.content}".strip()
-		
-		if task.scheduler is not None:
-			new_line = f"{task.scheduler.code} " + new_line
-		
-		if task.priority != 0:
-			new_line = f"{{{task.priority}}} " + new_line
-		
-		indent_level = len(task.id) - 1
-		new_line = self.indent_char * indent_level + new_line
-		line_num = prev_task.line_num if prev_task else 0
-		
-		if prev_task and prev_task not in (task.fts, task.parent):
-			line_num += len(flatten_subtasks(prev_task))
-		
-		lines.insert(line_num, new_line)
-		self.value = "\n".join(lines).strip() + "\n"
-		
-		return line_num
-	
-	def remove_task(self, task: Task) -> None:
-		lines = self.value.splitlines()
-		indent_level = len(task.id) - 1
-		subtasks_count = 0
-		
-		for line in lines[task.line_num:]:
-			if line.startswith(self.indent_char * (indent_level + 1)):
-				subtasks_count += 1
-			else:
-				break
-		
-		new_value = lines[:task.line_num - 1] + lines[task.line_num + subtasks_count:]  # noqa E501
-		self.value = "\n".join(new_value).strip() + "\n"
 
 
 # Circular Imports
