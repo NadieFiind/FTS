@@ -1,5 +1,6 @@
 from typing import Tuple
 from fts.core import Task
+from datetime import datetime
 from abc import ABC, abstractmethod
 from overrides import final, EnforceOverrides
 
@@ -19,6 +20,10 @@ class Scheduler(ABC, EnforceOverrides):
 	
 	@abstractmethod
 	def call(self, task: Task) -> Tuple[bool, str]:
+		raise NotImplementedError()
+	
+	@abstractmethod
+	def when(self, task: Task) -> datetime:
 		raise NotImplementedError()
 	
 	@abstractmethod

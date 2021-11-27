@@ -1,6 +1,7 @@
+from math import ceil
 from collections import OrderedDict
 from datetime import datetime as dt
-from typing import Any, Dict, Final, Tuple
+from typing import Any, Dict, List, Final, Tuple
 
 
 WEEK_DAYS: Final = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
@@ -102,3 +103,20 @@ def datetimeToFriendlyString(datetime: dt) -> str:
 
 def datetime_now() -> dt:
 	return dt.now()
+
+
+def get_week_of_month(datetime: dt) -> int:
+	first_day = datetime.replace(day=1)
+	day_of_month = datetime.day
+	
+	if(first_day.weekday() == 6):
+		adjusted_dom = (1 + first_day.weekday()) / 7
+	else:
+		adjusted_dom = day_of_month + first_day.weekday()
+	
+	return int(ceil(adjusted_dom / 7.0))
+
+
+def shift_sequence(shift: int, sequence: List) -> List:
+	n = shift % len(sequence)
+	return sequence[n:] + sequence[:n]

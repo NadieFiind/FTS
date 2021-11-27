@@ -1,3 +1,4 @@
+from datetime import datetime
 from fts.utils import stringToDict
 from fts.core.exceptions import InvalidSyntax
 from typing import Any, List, Dict, Tuple, Optional
@@ -35,10 +36,25 @@ class Task:
 		
 		return str(self.fts.tasks.index(self))
 	
+	def when(self) -> Optional[str]:
+		"""
+			Return the timestamp when this task will occur.
+			If this task is scheduled right now, return `None`.
+		"""
+		
+		if self.scheduler is None:
+			if self.parent:
+				return self.parent.when()
+			
+			return None
+		
+		when: Optional[datetime] = self.scheduler.when(self)
+		return when.strftime("%Y-%m-%dT%H:%M:%S") if when else None
+	
 	def call_scheduler(self) -> Tuple[Optional[bool], str]:
 		if self.scheduler is None:
-			if self.parent and self.parent.scheduler:
-				return self.parent.scheduler.call(self)
+			if self.parent:
+				return self.parent.call_scheduler()
 			
 			return None, "No Schedule"
 		
