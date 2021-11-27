@@ -14,7 +14,7 @@
 		<div id="{{ task.id }}" class="task{{ ' ignore' if task.priority < 0 }}">
 			<div class="task-content">
 				<span class="hide-btn noselect">x</span>
-				<span class="content{{ ' when-' + task.when() }}">{{ task.content }}</span>
+				<span class="content{{ ' when-' + task.when() }}{{ ' active-now' if task.call_scheduler()[0] }}">{{ task.content }}</span>
 			</div>
 			
 			{% if task.scheduler %}
@@ -28,5 +28,7 @@
 		{% if not fts.tasks %}
 		<div class="no-tasks">no tasks???</div>
 		{% endif %}
+		
+		<button class="reload-btn" onclick="localStorage.clear(); location.reload();">Reload</button>
 	</body>
 </html>
