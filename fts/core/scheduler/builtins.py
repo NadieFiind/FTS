@@ -120,10 +120,26 @@ def days(
 						
 						nday = WEEK_DAYS.index(sday) + 1
 						
-						return dt.strptime(
-							f"{now.year}-{current_month}-{nday + 7 * (week - 1)} {start_time}",
-							date_format
-						)
+						try:
+							return dt.strptime(
+								f"{now.year}-{current_month}-{nday + 7 * (week - 1)} {start_time}",
+								date_format
+							)
+						except ValueError:  # day is out of range for month
+							month: str
+							year: int
+							
+							try:
+								month = MONTHS[now.month]
+								year = now.year
+							except IndexError:
+								month = MONTHS[0]
+								year = now.year + 1
+							
+							return dt.strptime(
+								f"{year}-{month}-1 {start_time}",
+								date_format
+							)
 				else:
 					raise InvalidSyntax()
 			
@@ -225,16 +241,21 @@ def monthly(
 			shifted_months = shift_sequence(nmonth, MONTHS)
 			nmonth += shifted_months.index(months[0]) + 1
 			
-			try:
-				return dt.strptime(
-					f"{now.year}-{nmonth}-{start_datetime.strftime('%d %H:%M:%S')}",
-					date_format
-				)
-			except ValueError:  # day is out of range for month
-				return dt.strptime(
-					f"{now.year + 1}-01-{start_datetime.strftime('%d %H:%M:%S')}",
-					date_format
-				)
+			return dt.strptime(
+				f"{now.year}-{nmonth}-{start_datetime.strftime('%d %H:%M:%S')}",
+				date_format
+			)
+			
+			#try:
+			#	return dt.strptime(
+			#		f"{now.year}-{nmonth}-{start_datetime.strftime('%d %H:%M:%S')}",
+			#		date_format
+			#	)
+			#except ValueError:  # day is out of range for month
+			#	return dt.strptime(
+			#		f"{now.year + 1}-01-{start_datetime.strftime('%d %H:%M:%S')}",
+			#		date_format
+			#	)
 		
 		@overrides  # type: ignore
 		def __str__(self) -> str:
