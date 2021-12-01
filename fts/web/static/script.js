@@ -19,7 +19,7 @@ for (let btn of s(".task .hide-btn", true)) {
 	});
 }
 
-mainLoop: for (let task of s(".task .content", true)) {
+for (let task of s(".task .content", true)) {
 	let id = `${task.parentNode.parentNode.id}-${task.textContent}`;
 	
 	for (let clas of task.classList) {
@@ -30,11 +30,13 @@ mainLoop: for (let task of s(".task .content", true)) {
 			if (id in hiddenTasks) {
 				if (!task.classList.contains("active-now")) {
 					task.parentNode.parentNode.remove();
-					continue mainLoop;
-				}
-				
-				if (new Date(hiddenTasks[id]) > date) {
-					task.parentNode.parentNode.remove();
+				} else {					
+					if (new Date(hiddenTasks[id]) > date) {
+						task.parentNode.parentNode.remove();
+					} else {
+						delete hiddenTasks[id];
+						localStorage.setItem("hiddenTasks", JSON.stringify(hiddenTasks));
+					}
 				}
 			}
 		}
