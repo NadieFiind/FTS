@@ -6,7 +6,7 @@ from fts.core.scheduler import Scheduler
 from fts.core.exceptions import InvalidSyntax
 from typing import Type, List, Union, Tuple, Optional
 from fts.utils import MONTHS, WEEK_DAYS, datetime_now, \
-	datetimeToFriendlyString, get_week_of_month, shift_sequence
+	get_week_of_month, shift_sequence
 
 
 # def yearly(
@@ -61,11 +61,13 @@ def days(
 	end: Optional[str] = None
 ) -> Type[Scheduler]:
 	if isinstance(days, str):
-		if days.lower() == "everyday":
+		days = days.lower().strip()
+		
+		if days == "everyday":
 			days = WEEK_DAYS
-		elif days.lower() == "weekdays":
+		elif days == "weekdays":
 			days = ["MON", "TUE", "WED", "THU", "FRI"]
-		elif days.lower() == "weekends":
+		elif days == "weekends":
 			days = ["SAT", "SUN"]
 	
 	days = [day.strip().upper() for day in days]
@@ -153,18 +155,18 @@ def days(
 					date_format
 				)
 			except ValueError:  # day is out of range for month
-				month: str
-				year: int
+				month_: str
+				year_: int
 				
 				try:
-					month = MONTHS[now.month]
-					year = now.year
+					month_ = MONTHS[now.month]
+					year_ = now.year
 				except IndexError:
-					month = MONTHS[0]
-					year = now.year + 1
+					month_ = MONTHS[0]
+					year_ = now.year + 1
 				
 				return dt.strptime(
-					f"{year}-{month}-1 {start_time}",
+					f"{year_}-{month_}-1 {start_time}",
 					date_format
 				)
 		
@@ -175,16 +177,19 @@ def days(
 	return Days()
 
 
-def monthly(
+def months(
 	months: List[str],
 	start: Optional[str] = None,
 	end: Optional[str] = None
 ) -> Scheduler:
+	if not months:
+		months = MONTHS[:]
+	
 	months = [month.strip().upper() for month in months]
 	start_datetime = dt.strptime(start, "%d %H:%M") if start else dt.min
 	end_datetime = dt.strptime(end, "%d %H:%M") if end else dt.max
 	
-	class Monthly(Scheduler):
+	class Months(Scheduler):
 		
 		@overrides  # type: ignore
 		def call(self, task: Task) -> Tuple[bool, str]:
@@ -263,4 +268,4 @@ def monthly(
 			edt = end_datetime
 			return f"{sdt.strftime('%d %H:%M')} - {edt.strftime('%d %H:%M')}"
 	
-	return Monthly()
+	return Months()
