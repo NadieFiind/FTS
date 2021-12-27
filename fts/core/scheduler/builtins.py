@@ -189,16 +189,21 @@ def months(
 	start_datetime = dt.strptime(start, "%d %H:%M") if start else dt.min
 	end_datetime = dt.strptime(end, "%d %H:%M") if end else dt.max
 	
+	start_datetime = start_datetime.replace(year=datetime_now().year)
+	end_datetime = end_datetime.replace(year=datetime_now().year)
+	
 	class Months(Scheduler):
 		
 		@overrides  # type: ignore
 		def call(self, task: Task) -> Tuple[bool, str]:
 			current_month = MONTHS[datetime_now().month - 1]
+			start_datetime_ = start_datetime.replace(month=datetime_now().month)
+			end_datetime_ = end_datetime.replace(month=datetime_now().month)
 			
 			for month in months:
 				if month in MONTHS:
 					if current_month == month:
-						if start_datetime <= datetime_now() <= end_datetime:
+						if start_datetime_ <= datetime_now() <= end_datetime_:
 							return True, self.__str__()
 						
 						return False, f"This Month: {self.__str__()}"
