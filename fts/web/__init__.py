@@ -1,9 +1,7 @@
-import os
 import json
 from fts.core import FTS
-from functools import wraps
-from typing import Any, Text, Callable
-from flask import Flask, Response, request, render_template
+from typing import Text, Callable
+from flask import Flask, request, render_template, abort
 
 
 app = Flask(__name__)
@@ -21,22 +19,12 @@ def initialize_fts() -> FTS:
 		return FTS(file.read(), indent_char=config.get("indent_char") or "\t")
 
 
-def requires_auth(f: Callable) -> Callable:
-	@wraps(f)
-	def wrapper(*args: Any, **kwargs: Any) -> Response:
-		auth = request.authorization
-		
-		if not auth or not auth.password == os.getenv("PASS"):
-			return Response(
-				"", 401, {"WWW-Authenticate": "Basic realm='Login Required'"}
-			)
-		
-		return f(*args, **kwargs)
-	
-	return wrapper
+@app.before_request
+def limit_remote_addr() -> None:
+	if "127.0.0.1" not in request.access_route:
+		abort(403)
 
 
 @app.route("/")
-@requires_auth
 def index() -> Text:
 	return render_template("index.html", fts=initialize_fts())
