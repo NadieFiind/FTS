@@ -10,6 +10,8 @@ let hiddenTasks = JSON.parse(localStorage.getItem("hiddenTasks") || "{}");
 
 for (let btn of s(".task .hide-btn", true)) {
 	btn.addEventListener("click", () => {
+		if (!confirm("Remove this item?")) return;
+		
 		let content = btn.parentNode.querySelector(".content");
 		let id = `${btn.parentNode.parentNode.id}-${content.textContent}`;
 		
