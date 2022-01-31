@@ -44,3 +44,8 @@ for (let task of s(".task .content", true)) {
 		}
 	}
 }
+
+window.onerror = (msg, url, lineNumber) => {
+	alert(`${msg} in ${url} at line ${lineNumber}.`);
+	return true;
+}
