@@ -197,13 +197,11 @@ def months(
 		@overrides  # type: ignore
 		def call(self, task: Task) -> Tuple[bool, str]:
 			current_month = MONTHS[datetime_now().month - 1]
-			start_datetime_ = start_datetime.replace(month=datetime_now().month)
-			end_datetime_ = end_datetime.replace(month=datetime_now().month)
 			
 			for month in months:
 				if month in MONTHS:
 					if current_month == month:
-						if start_datetime_ <= datetime_now() <= end_datetime_:
+						if start_datetime.day <= datetime_now().day <= end_datetime.day:
 							return True, self.__str__()
 						
 						return False, f"This Month: {self.__str__()}"
